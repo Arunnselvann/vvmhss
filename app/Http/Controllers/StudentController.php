@@ -12,6 +12,11 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
+    public function __construct(Student $student)
+    {
+        $this->student = $student;
+    }
+
     public function index()
     {
         return view('create');
@@ -25,7 +30,7 @@ class StudentController extends Controller
             'email'=>'required|email|unique:students'
         ]);
 
-        $query = DB::table('students')->insert([
+        $query =$this->student->insert([
             'student'=>$req->input('name'),
             'email'=>$req->input('email')
         ]);
@@ -39,24 +44,21 @@ class StudentController extends Controller
     }
     public function show()
     {
-        $lists= DB::table('students')->get();
+        $lists= $this->student->get();
         return view('create',compact('lists'));
     }
 
     public function update(Request $request)
     {
-        $update = Student::where('id',$request->id)->update($request->except(['_token']));
+        $this->student->where('id',$request->id)->update($request->except(['_token']));
         return back();
     }
     
     public function delete($id)
     {
-        DB::table('students')->where('id', $id)->delete();
+        $this->student->where('id', $id)->delete();
         return back();
 
     }
 
-
-    
-   
 }
